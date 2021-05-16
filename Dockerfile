@@ -11,4 +11,5 @@ WORKDIR /usr/src/app
 RUN git clone -b ${GIT_REVISION} --single-branch https://github.com/Chia-Network/chia-blockchain.git .
 RUN pip install -e .
 
-ENTRYPOINT [ "/usr/local/bin/chia" ]
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
