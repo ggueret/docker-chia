@@ -9,4 +9,4 @@ else
     chia --root-path=/etc/chia/mainnet keys generate
 fi
 
-exec "chia --root-path=/etc/chia/mainnet $@"
+exec chia --root-path=/etc/chia/mainnet "$@"
