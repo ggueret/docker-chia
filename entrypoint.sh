@@ -1,32 +1,38 @@
 #!/bin/sh
 set -e
 
+ROOT_PATH="/etc/chia/mainnet"
+CHIA="chia --root-path=$ROOT_PATH"
+
+${CHIA} init
+
+# Creates a new certificate signed by the main machine's CA
 if [ -d /ca ]; then
-    # Creates a new certificate signed by your main machine's CA
-    chia --root-path=/etc/chia/mainnet init -c /ca
-else
-    chia --root-path=/etc/chia/mainnet init
+    $CHIA init -c /ca
 fi
 
 if [ -r /mnemonic.key ]; then
-    chia --root-path=/etc/chia/mainnet keys add -f /mnemonic.key
+    $CHIA keys add -f /mnemonic.key
 else
-    chia --root-path=/etc/chia/mainnet keys generate
+    $CHIA keys generate
 fi
 
-sed -i 's/localhost/127.0.0.1/g' /etc/chia/mainnet/config/config.yaml
+$CHIA plots add -d /plots
+
+sed -i 's/localhost/127.0.0.1/g' $ROOT_PATH/config/config.yaml
+sed -i 's/log_stdout: false/log_stdout: true/g' $ROOT_PATH/config/config.yaml
 
 if [ -n "$ROLE" ]; then
     if [ "$ROLE" = "harvester" ]; then
         if [ -n "$FARMER_ADDRESS" ] && [ -n "$FARMER_PORT" ]; then
-            chia --root-path=/etc/chia/mainnet configure --set-farmer-peer $FARMER_ADDRESS:$FARMER_PORT
+            $CHIA configure --set-farmer-peer $FARMER_ADDRESS:$FARMER_PORT
         fi
-        chia --root-path=/etc/chia/mainnet start harvester
+        $CHIA start harvester -r
         while true; do sleep 30; done;
     else
         echo "unknown role."
         exit 127
     fi
 else
-    exec chia --root-path=/etc/chia/mainnet "$@"
+    exec chia --root-path=$ROOT_PATH "$@"
 fi
