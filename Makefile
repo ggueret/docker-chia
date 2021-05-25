@@ -5,3 +5,6 @@ build:
 
 shell:
 	docker run --rm -ti --entrypoint /bin/bash ggueret/chia:${GIT_REVISION}
+
+run:
+	docker run --rm ggueret/chia:${GIT_REVISION}
