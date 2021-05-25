@@ -1,10 +1,10 @@
 #!/bin/sh
 set -e
 
-ROOT_PATH="/etc/chia/mainnet"
+ROOT_PATH="/root/.chia/mainnet"
 CHIA="chia --root-path=$ROOT_PATH"
 
-${CHIA} init
+$CHIA init
 
 # Creates a new certificate signed by the main machine's CA
 if [ -d /ca ]; then
